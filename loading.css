@@ -1,0 +1,78 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Courier New', monospace;
+    background: url(exia.jpg);
+}
+
+/* Loading Container */
+#loading-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    background-image: black; /* Replace with your background image path */
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+/* Transparent Overlay */
+.background-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Light black transparent layer */
+    z-index: 1;
+}
+
+.bgimg-1, .bgimg-2, .bgimg-3 {
+    position: relative;
+    opacity: 0.65;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  .bgimg-1 {
+    background-image: url("astray.jpg"); /* Update with the actual image path */
+    min-height: 100vh;
+  }
+/* Loading Text Styling */
+.loading-text {
+    position: relative;
+    z-index: 2;
+    font-size: 2.5em;
+    color: #00ff00; /* Green text color for hacker theme */
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-align: center;
+    animation: letterShuffle 1.5s steps(30) infinite, fadeOut 3s forwards;
+}
+
+/* Letter Shuffle Effect */
+@keyframes letterShuffle {
+    0%, 100% { content: "Omuk's Page"; }
+    20% { content: "0MUK'5 P4G3"; }
+    40% { content: "O^^K'S P4G3"; }
+    60% { content: "0M_K'S PAGE"; }
+    80% { content: "Omuk's Page"; }
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
