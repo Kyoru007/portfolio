@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body, html {
@@ -12,7 +13,7 @@ body, html {
 
 .bgimg-1, .bgimg-2, .bgimg-3 {
   position: relative;
-  opacity: 0.65;
+  opacity: 10;
   background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
@@ -20,17 +21,17 @@ body, html {
 
 }
 .bgimg-1 {
-  background-image: url("astray.jpg");
+  background-image: url("images/astray.jpg");
   min-height: 100%;
 }
 
 .bgimg-2 {
-  background-image: url("exia.jpg");
+  background-image: url("images/astray.jpg");
   min-height: 400px;
 }
 
 .bgimg-3 {
-  background-image: url("dark-exia.jpg");
+  background-image: url("images/astray.jpg");
   min-height: 400px;
 }
 
@@ -67,7 +68,19 @@ h3 {
 </style>
 </head>
 <body>
-
+  <nav class="container">
+    <div class="nav-container">
+        <a class="nav-link-title" ><span >Muktadirul Alam Sowad</span></a>
+        <div class="nav-links">
+        
+            <a href="table.html" class="nav-link">Education And Certifications</a>
+            <a href="skills.html" class="nav-link">Skills</a>
+            <a href="#experiences" class="nav-link">Experiences</a>
+            <a href="#projects" class="nav-link">Projects</a>
+            <a href="#social" class="nav-link">Socials</a>
+        </div>
+    </div>
+</nav>
 <div class="bgimg-1">
   <div class="caption">
   <span class="border">SCROLL DOWN</span>
@@ -85,7 +98,7 @@ h3 {
   </div>
 </div>
 
-<div style="position:relative;">
+<div id="experiences" style="position:relative;">
   <div style="color:#ddd;background-color:#282E34;text-align:center;padding:50px 80px;text-align: justify;">
   <p>Scroll up and down to really get the feeling of how Parallax Scrolling works.</p>
   </div>

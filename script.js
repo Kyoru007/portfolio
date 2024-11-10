@@ -5,7 +5,7 @@ const originalText = "Omuk's Page";
 function shuffleLetters() {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*abcdefghijklmnopqrstuvwxyz";
     let shuffledText = '';
-    
+    debugger
     for (let i = 0; i < originalText.length; i++) {
         if (originalText[i] !== ' ') {
             shuffledText += characters.charAt(Math.floor(Math.random() * characters.length));
