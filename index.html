@@ -1,121 +1,71 @@
 <!DOCTYPE html>
-<html>
+
 <head>
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-body, html {
-  height: 100%;
-  margin: 0;
-  font: 400 15px/1.8 "Lato", sans-serif;
-  color: #777;
-}
-
-.bgimg-1, .bgimg-2, .bgimg-3 {
-  position: relative;
-  opacity: 10;
-  background-attachment: fixed;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-
-}
-.bgimg-1 {
-  background-image: url("images/astray.jpg");
-  min-height: 100%;
-}
-
-.bgimg-2 {
-  background-image: url("images/astray.jpg");
-  min-height: 400px;
-}
-
-.bgimg-3 {
-  background-image: url("images/astray.jpg");
-  min-height: 400px;
-}
-
-.caption {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 100%;
-  text-align: center;
-  color: #000;
-}
-
-.caption span.border {
-  background-color: #111;
-  color: #fff;
-  padding: 18px;
-  font-size: 25px;
-  letter-spacing: 10px;
-}
-
-h3 {
-  letter-spacing: 5px;
-  text-transform: uppercase;
-  font: 20px "Lato", sans-serif;
-  color: #111;
-}
-
-/* Turn off parallax scrolling for tablets and phones */
-@media only screen and (max-device-width: 1024px) {
-  .bgimg-1, .bgimg-2, .bgimg-3 {
-    background-attachment: scroll;
-  }
-}
-</style>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="index.css">
 </head>
+
 <body>
-  <nav class="container">
-    <div class="nav-container">
-        <a class="nav-link-title" ><span >Muktadirul Alam Sowad</span></a>
-        <div class="nav-links">
-            <a href="#about">about</a>
-            <a href="table.html" class="nav-link">Education And Certifications</a>
-            <a href="skills.html" class="nav-link">Skills</a>
-            <a href="#experiences" class="nav-link">Experiences</a>
-            <a href="#projects" class="nav-link">Projects</a>
-            <a href="#social" class="nav-link">Socials</a>
-        </div>
+
+  <div class="navbar">
+    <a class="nav-link-title"><span>Muktadirul Alam Sowad</span></a>
+    <div class="nav-links">
+      <a href="#about">about</a>
+      <a href="table.html" class="nav-link">Education And Certifications</a>
+      <a href="skills.html" class="nav-link">Skills</a>
+      <a href="#experiences" class="nav-link">Experiences</a>
+      <a href="#projects" class="nav-link">Projects</a>
+      <a href="#social" class="nav-link">Socials</a>
     </div>
-</nav>
-<div class="bgimg-1">
-  <div class="caption">
-  <span class="border">SCROLL DOWN</span>
   </div>
-</div>
 
-<div id="about" style="color: #777;background-color:white;text-align:center;padding:50px 80px;text-align: justify;">
-  <h3 style="text-align:center;">About</h3><hr>
-  <p><h3 style="text-align:center;">CTF PLAyer| Web developer| Red Teamer</h3>A passionate CTF player, skilled web developer, and dedicated Red Team enthusiast, you bring a unique drive to understanding and improving cybersecurity from the inside out. You tackle challenges with an inquisitive mind, seeing opportunities where others see obstacles, and striving to make systems more resilient. In the world of cybersecurity, those who are "crazy enough" to challenge norms and question vulnerabilities play a crucial role in shaping a safer digital landscape.
-<br>
-<blockquote>
-    <b><i>"The people who are crazy enough to think they can change the world are the ones who do."</i><br> — Edward Snowden.</b></blockquote> Like Snowden, my commitment to pushing boundaries and questioning the status quo fuels meaningful change and keeps me at the cutting edge of security.</p>
-</div>
-
-<div class="bgimg-2">
-  <div class="caption">
-  <span class="border" style="background-color:transparent;font-size:25px;color: #f7f7f7;">LESS HEIGHT</span>
+  <div class="bgimg-1">
+    <div class="caption">
+      <span class="border" id="shuffle-text">Muktadirul Alam Sowad</span>
+    </div>
   </div>
-</div>
 
-<div id="experiences" style="position:relative;">
-  <div style="color:#ddd;background-color:#282E34;text-align:center;padding:50px 80px;text-align: justify;">
-  <p>Scroll up and down to really get the feeling of how Parallax Scrolling works.</p>
+  <div id="about" style="color: black;background-color:white;text-align:center;padding:50px 80px;text-align: justify;">
+    <h3 style="text-align:center;">About</h3>
+    <hr>
+    <p>
+    <h3 style="text-align:center;">CTF PLAyer| Web developer| Red Teamer</h3>A passionate CTF player, skilled web
+    developer, and dedicated Red Team enthusiast, you bring a unique drive to understanding and improving
+    cybersecurity from the inside out. You tackle challenges with an inquisitive mind, seeing opportunities where
+    others see obstacles, and striving to make systems more resilient. In the world of cybersecurity, those who are
+    "crazy enough" to challenge norms and question vulnerabilities play a crucial role in shaping a safer digital
+    landscape.And how can I not tell about CTFs when its my own site, its just so amazing that if I start telling it, I
+    could not stop. That why click <a href="https://ctftime.org/" target="_blank">here</a> to know more about it
+    <br>
+    <blockquote>
+      <b><i>"The people who are crazy enough to think they can change the world are the ones who do."</i><br> — Edward
+        Snowden.</b>
+    </blockquote> Like Snowden, my commitment to pushing boundaries and questioning the status quo fuels meaningful
+    change and keeps me at the cutting edge of security.</p>
   </div>
-</div>
 
-<div class="bgimg-3">
-  <div class="caption">
-  <span class="border" style="background-color:transparent;font-size:25px;color: #f7f7f7;">SCROLL UP</span>
+  <div class="bgimg-1">
+    <div class="caption">
+      <span class="border" style="background-color:transparent;font-size:25px;color: #f7f7f7;">LESS HEIGHT</span>
+    </div>
   </div>
-</div>
 
-<div style="position:relative;">
-  <ul>
-    <li>
+  <div id="experiences" style="position:relative;">
+    <div style="color:#ddd;background-color:#282E34;text-align:center;padding:50px 80px;text-align: justify;">
+      <p>Scroll up and down to really get the feeling of how Parallax Scrolling works.</p>
+    </div>
+  </div>
+
+  <div class="bgimg-1">
+    <div class="caption">
+      <span class="border" style="background-color:transparent;font-size:25px;color: #f7f7f7;">SCROLL UP</span>
+    </div>
+  </div>
+
+  <div style="position:relative;">
+    <ul>
+      <li>
         <img src="" alt="React JS" style="width: 50px; height: 60px;">
         <img src="images/python.jpg" alt="Bootstrap5" style="width: 50px; height: 60px;">
         <img src="images/CSS.png" alt="Material UI" style="width: 50px; height: 60px;">
@@ -123,19 +73,20 @@ h3 {
         <img src="images/rea" alt="MongoDB" style="width: 50px; height: 60px;">
         <img src="images/Untitled.png" alt="Node JS" style="width: 55px; height: 60px;">
         <img src="images/sk7.png" alt="Express JS" style="width: 50px; height: 60px;">
-    </li>
-    
-    
-    
-</ul>
-</div>
-</div>
+      </li>
 
-<div class="bgimg-1">
-  <div class="caption">
-  <span class="border">COOL!</span>
+
+
+    </ul>
   </div>
-</div>
+  </div>
 
+  <div class="bgimg-1">
+    <div class="caption">
+      <span class="border">COOL!</span>
+    </div>
+  </div>
+  <script src="script.js"></script>
 </body>
+
 </html>

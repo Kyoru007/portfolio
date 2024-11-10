@@ -1,28 +1,30 @@
-const loadingText = document.getElementById("loading-text");
-const originalText = "Omuk's Page";
+document.addEventListener("DOMContentLoaded", function () {
+    const textElement = document.getElementById("shuffle-text");
+    const originalText = "MUKTADIRUL ALAM SOWAD";
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+=-`~;:/'\" \[}{]/?1234567890";
+    let shuffleInterval;
 
-// Function to shuffle letters randomly for a hacker effect
-function shuffleLetters() {
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*abcdefghijklmnopqrstuvwxyz";
-    let shuffledText = '';
-    debugger
-    for (let i = 0; i < originalText.length; i++) {
-        if (originalText[i] !== ' ') {
-            shuffledText += characters.charAt(Math.floor(Math.random() * characters.length));
-        } else {
-            shuffledText += ' ';
+    function shuffleLetters() {
+        let shuffledText = '';
+        for (let i = 0; i < originalText.length; i++) {
+            if (originalText[i] === ' ') {
+                shuffledText += ' ';
+            } else {
+                shuffledText += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
         }
+        textElement.textContent = shuffledText;
     }
 
-    loadingText.textContent = shuffledText;
-}
+    function startShuffle() {
+        shuffleInterval = setInterval(shuffleLetters, 0.1);
+        setTimeout(stopShuffle, 9000); // Stop shuffling after 3 seconds
+    }
 
-// Interval to shuffle letters repeatedly
-const interval = setInterval(shuffleLetters, 1);
+    function stopShuffle() {
+        clearInterval(shuffleInterval);
+        textElement.textContent = originalText;
+    }
 
-// Redirect after 3 seconds
-setTimeout(() => {
-    clearInterval(interval);
-    loadingText.textContent = originalText;
-    window.location.href = "index.html";
-}, 5000);
+    startShuffle(); // Start shuffling when the page loads
+});
