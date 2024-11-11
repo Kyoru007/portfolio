@@ -9,16 +9,16 @@
 <body>
 
   <div class="navbar">
-    <a class="nav-link-title"><span>Muktadirul Alam Sowad</span></a>
     <div class="nav-links">
-      <a href="#about">about</a>
-      <a href="table.html" class="nav-link">Education And Certifications</a>
-      <a href="skills.html" class="nav-link">Skills</a>
-      <a href="#experiences" class="nav-link">Experiences</a>
-      <a href="#projects" class="nav-link">Projects</a>
-      <a href="#social" class="nav-link">Socials</a>
+        <a href="#about">about</a>
+        <a href="table.html" class="nav-link">Education And Certifications</a>
+        <a href="#skills" class="nav-link">Skills</a>
+        <a href="#experiences" class="nav-link">Experiences</a>
+        <a href="#projects" class="nav-link">Projects</a>
+        <a href="#social" class="nav-link">Socials</a>
     </div>
-  </div>
+</div>
+
 
   <div class="bgimg-1">
     <div class="caption">
@@ -53,17 +53,68 @@
 
   <div id="experiences" style="position:relative;">
     <div style="color:#ddd;background-color:#282E34;text-align:center;padding:50px 80px;text-align: justify;">
-      <p>Scroll up and down to really get the feeling of how Parallax Scrolling works.</p>
+      <p> <ul>
+        <li>
+          <img src="" alt="React JS" style="width: 50px; height: 60px;">
+          <img src="images/python.jpg" alt="Bootstrap5" style="width: 50px; height: 60px;">
+          <img src="images/CSS.png" alt="Material UI" style="width: 50px; height: 60px;">
+          <img src="images/dj.jpg" alt="Tailvind CSS" style="width: 50px; height: 60px;">
+          <img src="images/rea" alt="MongoDB" style="width: 50px; height: 60px;">
+          <img src="images/Untitled.png" alt="Node JS" style="width: 55px; height: 60px;">
+          <img src="images/sk7.png" alt="Express JS" style="width: 50px; height: 60px;">
+        </li>
+  
+  
+  
+      </ul></p>
     </div>
   </div>
 
   <div class="bgimg-1">
-    <div class="caption">
-      <span class="border" style="background-color:transparent;font-size:25px;color: #f7f7f7;">SCROLL UP</span>
+    <div class="caption" >
+      <div class="table-container" >
+        <table id='certification-table' border="2" align="center">
+          <thead>
+              <tr>
+                  <th>No.</th>
+                  <th>Certification</th>
+                  <th>Institution</th>
+                  <th>Year</th>
+              </tr>
+          </thead>
+  
+          <tbody>
+              <tr>
+                  <td>1</td>
+                  <td>SSC</td>
+                  <td> <a href="https://mpsc.edu.bd/">Mohammadpur Preparatory School and College</a></td>
+                  <td>2019</td>
+              </tr>
+          </tbody>
+  
+          <tbody>
+              <tr>
+                  <td>2</td>
+                  <td>HSC</td>
+                  <td><a href="https://www.dhakacitycollege.edu.bd/">Dhaka City College</a></td>
+                  <td>2022</td>
+              </tr>
+          </tbody>
+  
+          <tbody>
+              <tr>
+                  <td>3</td>
+                  <td>BSc.</td>
+                  <td><a href="https://www.bracu.ac.bd/">BRAC University</a></td>
+                  <td>2026</td>
+              </tr>
+          </tbody>
+      </table>
+      </div>    
     </div>
   </div>
 
-  <div style="position:relative;">
+  <div id="skills" style="position:relative;">
     <ul>
       <li>
         <img src="" alt="React JS" style="width: 50px; height: 60px;">
@@ -83,10 +134,43 @@
 
   <div class="bgimg-1">
     <div class="caption">
-      <span class="border">COOL!</span>
+        <span class="border">CONTACT ME</span>
+
+        <!-- Social Media Links -->
+        <div class="social-container">
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/yourprofile" target="_blank" title="LinkedIn">
+                    <img src="linkedin-icon.png" alt="LinkedIn" class="social-icon">
+                </a>
+                <a href="https://www.instagram.com/yourprofile" target="_blank" title="Instagram">
+                    <img src="instagram-icon.png" alt="Instagram" class="social-icon">
+                </a>
+                <a href="https://www.facebook.com/yourprofile" target="_blank" title="Facebook">
+                    <img src="facebook-icon.png" alt="Facebook" class="social-icon">
+                </a>
+                <a href="https://discord.gg/yourinvitecode" target="_blank" title="Discord">
+                    <img src="discord-icon.png" alt="Discord" class="social-icon">
+                </a>
+            </div>
+        </div>
+
+        <p class="footer-info">
+            &copy; <span id="year"></span> My name <br>
+            Last Modified: <span id="last_modified"></span> | Page Location is: <span id="page_location"></span>
+        </p>
     </div>
-  </div>
-  <script src="script.js"></script>
+</div>
+
+<script>
+    // Update year and last modified info
+    document.getElementById("year").textContent = new Date().getFullYear();
+    document.getElementById("last_modified").textContent = document.lastModified;
+    document.getElementById("page_location").textContent = window.location.href;
+</script>
+
+
+
+    <script src="script.js"></script>
 </body>
 
 </html>

@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function startShuffle() {
         shuffleInterval = setInterval(shuffleLetters, 0.1);
-        setTimeout(stopShuffle, 9000); // Stop shuffling after 3 seconds
+        setTimeout(stopShuffle, 1300); // Stop shuffling after 3 seconds
     }
 
     function stopShuffle() {
@@ -28,3 +28,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     startShuffle(); // Start shuffling when the page loads
 });
+
+// JavaScript to change navbar background on scroll
+window.addEventListener("scroll", function() {
+    const navbar = document.querySelector(".navbar");
+    if (window.scrollY > 100) { // Adjust scroll distance as needed
+        navbar.classList.add("scrolled");
+    } else {
+        navbar.classList.remove("scrolled");
+    }
+});
+document.getElementById('year').innerText = (new Date()).getFullYear();
+document.getElementById('last_modified').innerText = document.lastModified;;
+document.getElementById('page_location').innerText = window.location.href;
