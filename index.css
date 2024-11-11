@@ -1,4 +1,5 @@
 /* General Reset */
+
 body,
 html {
   height: 100%;
@@ -8,7 +9,7 @@ html {
   background: #000;
 }
 
-/* Background Images for Parallax Effect */
+/* Parallax Background Images */
 .bgimg-1,
 .bgimg-2,
 .bgimg-3 {
@@ -23,19 +24,19 @@ html {
 
 .bgimg-1 {
   background-image: url("images/k2.jpeg");
-  /* Update with the actual image path */
+  /* Confirm this path */
   min-height: 100vh;
 }
 
 .bgimg-2 {
-  background-image: url("images/linkedin.jpg");
-  /* Update with the actual image path */
+  background-image: url("images/astray.jpg");
+  /* Confirm this path */
   min-height: 400px;
 }
 
 .bgimg-3 {
   background-image: url("images/linkedin.jpg");
-  /* Update with the actual image path */
+  /* Confirm this path */
   min-height: 400px;
 }
 
@@ -88,18 +89,22 @@ section {
 /* Navbar Styling with Initial Transparency */
 .navbar {
   overflow: hidden;
-  background-color: rgba(51, 51, 51, 0.1); /* Lighter semi-transparent */
+  background-color: rgba(51, 51, 51, 0.1);
+  /* Lighter semi-transparent */
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 1000; /* Ensures navbar stays on top */
+  z-index: 1000;
+  /* Ensures navbar stays on top */
   padding: 10px 0;
-  transition: background-color 0.3s ease; /* Smooth transition */
+  transition: background-color 0.3s ease;
+  /* Smooth transition */
 }
 
 /* Darker Background when Scrolled */
 .navbar.scrolled {
-  background-color: rgba(7, 7, 7, 0.8); /* Darker semi-transparent */
+  background-color: rgba(7, 7, 7, 0.8);
+  /* Darker semi-transparent */
 }
 
 /* Link Styling */
@@ -115,17 +120,27 @@ section {
 
 /* Hover Effect */
 .navbar a:hover {
-  background-color: rgba(118, 118, 123, 0.815); /* Slightly darker on hover */
+  background-color: rgba(118, 118, 123, 0.815);
+  /* Slightly darker on hover */
   color: white;
 }
 
 .skill-container {
-  margin: 4rem auto;
-  padding: 2rem 0;
-  background-color: #f2f2f2;
-  color: black;
-  border-radius: 15px;
-  box-shadow: 0 2px 2px 2px #f2f2f2;
+  text-align: center;
+  width: max-content;
+  height: max-content;
+  color: rgb(195, 197, 208);
+  /* background: #000; */
+  font-size: 20px;
+  text-align: center;
+  font-weight: 4000;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  line-height: 2;
+  background: rgb(8, 8, 8);
+  opacity: .6;
+
+
+  transition: all 2s;
 }
 
 p {
@@ -143,12 +158,27 @@ p {
   background: linear-gradient(rgb(25, 24, 24), rgb(60, 58, 60), rgb(8, 8, 8));
   opacity: .6;
   border: #ac3594;
-  border-radius: 20%;
+
   transition: all 2s;
   /* margin-left: 25%; */
 
 }
 
+#certification-table {
+
+  text-align: center;
+  width: max-content;
+  height: max-content;
+  color: rgb(195, 197, 208);
+  /* background: #000; */
+  font-size: 20px;
+  text-align: center;
+  font-weight: 4000;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  line-height: 2;
+  background: rgb(8, 8, 8);
+  opacity: .6;
 
 
-
+  transition: all 2s;
+}
