@@ -148,16 +148,16 @@ p {
   text-align: center;
   width: auto;
   height: max-content;
-  color: rgb(195, 197, 208);
+  color: rgb(247, 248, 255);
   /* background: #000; */
   font-size: 20px;
   text-align: center;
   font-weight: 4000;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   line-height: 2;
-  background: linear-gradient(rgb(25, 24, 24), rgb(60, 58, 60), rgb(8, 8, 8));
-  opacity: .6;
-  border: #ac3594;
+  background: linear-gradient(rgb(25, 24, 24), rgb(16, 15, 16), rgb(8, 8, 8));
+  opacity: .8;
+  border: #918f91;
 
   transition: all 2s;
   /* margin-left: 25%; */
@@ -179,8 +179,60 @@ p {
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   line-height: 2;
   background: rgb(222, 222, 228);
-  opacity: .6;
+  opacity: .9;
 
 
   transition: all 2s;
+}
+
+.footer-info {
+  border-radius: 25px;
+  text-align: center;
+  width: auto;
+  height: max-content;
+  color: rgb(255, 255, 255);
+  /* background: #000; */
+  font-size: 20px;
+  text-align: center;
+  font-weight: 4000;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  line-height: 2;
+  background: linear-gradient(rgb(25, 24, 24), rgb(0, 0, 0), rgb(8, 8, 8));
+  opacity: .9;
+  border: #ac3594;
+}
+
+.contacts{
+  color: #ff3c00;
+  font-weight: 1000;
+  border-radius: 25px;
+  text-align: center;
+  width: auto;
+  height: max-content;
+  color: rgb(255, 255, 255);
+  /* background: #000; */
+  font-size: 20px;
+  text-align: center;
+  font-weight: 4000;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  line-height: 2;
+  background: linear-gradient(rgb(25, 24, 24), rgb(0, 0, 0), rgb(8, 8, 8));
+  opacity: .9;
+  border: #ac3594;
+}
+foot{
+  border-radius: 25px;
+  text-align: center;
+  width: auto;
+  height: max-content;
+  color: rgb(255, 255, 255);
+  /* background: #000; */
+  font-size: 20px;
+  text-align: center;
+  font-weight: 4000;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  line-height: 2;
+  background: linear-gradient(rgb(25, 24, 24), rgb(0, 0, 0), rgb(8, 8, 8));
+  opacity: .9;
+  border: #ac3594;
 }
