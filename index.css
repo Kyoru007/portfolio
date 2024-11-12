@@ -166,7 +166,8 @@ p {
 
 #certification-table {
   border="2" ;
-  align="center";
+    margin-left: auto;
+  margin-right: auto;
   text-align: center;
   width: max-content;
   height: max-content;
