@@ -31,7 +31,7 @@ body {
 
 
     /* Center and scale the image nicely */
-    background: url("jpeg.png");
+    background: url("pexels-anthony-macajone-874129-1874636.jpg");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -56,7 +56,7 @@ img {
 
 #para {
     text-align: center;
-    color: black;
+    color: white;
 
 }
 
