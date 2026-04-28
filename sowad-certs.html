@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Certificates — Muktadirul Alam Sowad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #080c10; --surface: #0d1117; --surface2: #161b22;
+    --accent: #00ff88; --accent2: #00c8ff; --text: #e6edf3; --muted: #7d8590;
+    --border: rgba(0,255,136,0.15); --glow: 0 0 20px rgba(0,255,136,0.2);
+    --font: 'Share Tech Mono', monospace;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.7; overflow-x: hidden; min-height: 100vh; }
+  body::before { content: ''; position: fixed; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px); pointer-events: none; z-index: 1000; }
+
+  #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0.13; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 900; display: flex; align-items: center; justify-content: space-between; padding: 1rem 4rem; background: rgba(8,12,16,0.88); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+  .nav-logo { font-family: var(--font); font-size: 13px; color: var(--accent); text-decoration: none; }
+  .nav-logo span { color: var(--muted); }
+  .nav-back { font-family: var(--font); font-size: 12px; color: var(--muted); text-decoration: none; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.2s; }
+  .nav-back:hover { color: var(--accent); }
+
+  .page-header { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 10rem 4rem 3rem; }
+  .section-label { font-family: var(--font); font-size: 11px; color: var(--accent); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem; }
+  .section-label::after { content: ''; width: 60px; height: 1px; background: var(--accent); }
+  h1.page-title { font-family: var(--font); font-size: clamp(2rem, 4.5vw, 3.8rem); font-weight: 400; letter-spacing: -0.01em; line-height: 1.1; margin-bottom: 1rem; }
+  .page-sub { font-family: var(--font); font-size: 13px; color: var(--muted); }
+  .page-sub span { color: var(--accent); }
+
+  .filter-bar { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 2rem 4rem 2.5rem; display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .filter-btn { font-family: var(--font); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.45rem 1.1rem; border: 1px solid var(--border); color: var(--muted); background: transparent; cursor: pointer; transition: all 0.2s; }
+  .filter-btn:hover, .filter-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,255,136,0.05); }
+
+  .certs-container { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 4rem 6rem; }
+  .certs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+
+  .cert-card { background: var(--surface); border: 1px solid var(--border); overflow: hidden; cursor: pointer; transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s; opacity: 0; transform: translateY(16px); animation: fadeUp 0.5s forwards; }
+  .cert-card:hover { border-color: rgba(0,255,136,0.5); box-shadow: var(--glow); transform: translateY(-4px); }
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+  .cert-img-wrap { position: relative; width: 100%; aspect-ratio: 4/3; overflow: hidden; background: var(--surface2); }
+  .cert-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; display: block; }
+  .cert-card:hover .cert-img-wrap img { transform: scale(1.04); }
+
+  .cert-overlay { position: absolute; inset: 0; background: rgba(0,255,136,0.08); opacity: 0; transition: opacity 0.25s; display: flex; align-items: center; justify-content: center; }
+  .cert-card:hover .cert-overlay { opacity: 1; }
+  .cert-overlay-icon { font-family: var(--font); font-size: 12px; color: var(--accent); border: 1px solid var(--accent); padding: 0.5rem 1rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  .cert-info { padding: 0.9rem 1.1rem; border-top: 1px solid var(--border); }
+  .cert-title { font-family: var(--font); font-size: 12px; margin-bottom: 0.4rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cert-tag { font-family: var(--font); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.6rem; display: inline-block; }
+  .tag-ctf  { background: rgba(0,255,136,0.1);  color: var(--accent);  border: 1px solid rgba(0,255,136,0.3); }
+  .tag-dev  { background: rgba(0,200,255,0.1);  color: var(--accent2); border: 1px solid rgba(0,200,255,0.3); }
+  .tag-course { background: rgba(255,170,0,0.1); color: #ffaa00; border: 1px solid rgba(255,170,0,0.3); }
+  .tag-thm  { background: rgba(94,239,122,0.1); color: #5eef7a; border: 1px solid rgba(94,239,122,0.3); }
+
+  .lightbox { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(8,12,16,0.97); align-items: center; justify-content: center; padding: 2rem; backdrop-filter: blur(8px); }
+  .lightbox.open { display: flex; }
+  .lightbox-inner { position: relative; max-width: 920px; width: 100%; }
+  .lightbox-inner img { width: 100%; max-height: 82vh; object-fit: contain; border: 1px solid var(--border); box-shadow: 0 0 60px rgba(0,255,136,0.12); display: block; }
+  .lightbox-close { position: absolute; top: -2.2rem; right: 0; font-family: var(--font); font-size: 12px; color: var(--muted); cursor: pointer; letter-spacing: 0.1em; text-transform: uppercase; background: none; border: none; transition: color 0.2s; }
+  .lightbox-close:hover { color: var(--accent); }
+  .lightbox-caption { margin-top: 0.75rem; font-family: var(--font); font-size: 12px; color: var(--muted); text-align: center; }
+  .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); font-family: var(--font); font-size: 20px; color: var(--muted); cursor: pointer; background: rgba(8,12,16,0.7); border: 1px solid var(--border); width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; user-select: none; }
+  .lightbox-nav:hover { color: var(--accent); border-color: var(--accent); }
+  .lightbox-prev { left: -56px; }
+  .lightbox-next { right: -56px; }
+
+  footer { position: relative; z-index: 1; text-align: center; padding: 2rem 3rem; border-top: 1px solid var(--border); font-family: var(--font); font-size: 12px; color: var(--muted); }
+  footer span { color: var(--accent); }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .page-header, .filter-bar, .certs-container { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .certs-grid { grid-template-columns: repeat(2, 1fr); }
+    .lightbox-prev { left: -8px; } .lightbox-next { right: -8px; }
+  }
+  @media (max-width: 560px) { .certs-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+
+<nav>
+  <a class="nav-logo" href="sowad-portfolio.html"><span>~/</span>sowad<span>.sh</span></a>
+  <a class="nav-back" href="sowad-portfolio.html">← Back to portfolio</a>
+</nav>
+
+<div class="page-header">
+  <div class="section-label">achievements</div>
+  <h1 class="page-title">Certificates &<br>Credentials</h1>
+  <p class="page-sub"><span id="visibleCount">18</span> certificates — CTF · TryHackMe · Development · Courses</p>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="ctf">CTF</button>
+  <button class="filter-btn" data-filter="thm">TryHackMe</button>
+  <button class="filter-btn" data-filter="dev">Development</button>
+  <button class="filter-btn" data-filter="course">Courses</button>
+</div>
+
+<div class="certs-container">
+  <div class="certs-grid" id="certsGrid">
+
+    <div class="cert-card" data-cat="thm" style="animation-delay:0.03s" onclick="openLightbox(0)">
+      <div class="cert-img-wrap"><img src="images/1766729365453.jpg" alt="THM Advent of Cyber 2025" loading="lazy"><div class="cert-overlay"><span class="cert-overlay-icon">View</span></div></div>
+      <div class="cert-info"><div class="cert-title">Advent of Cyber 2025</div><span class="cert-tag tag-thm">TryHackMe</span></div>
+    </div>
+
+    <div class="cert-card" data-cat="thm" style="animation-delay:0.06s" onclick="openLightbox(1)">
+      <div class="cert-img-wrap"><img src="images/1771497274578.jpg" alt="THM Cyber Security 101" loading="lazy"><div class="cert-overlay"><span class="cert-overlay-icon">View</span></div></div>
+      <div class="cert-info"><div class="cert-title">Cyber Security 101 Learning Path</div><span class="cert-tag tag-thm">TryHackMe</span></div>
+    </div>
+
+    <div class="cert-card" data-cat="thm" style="animation-delay:0.09s" onclick="openLightbox(2)">
+      <div class="cert-img-wrap"><img src="images/THM-MUTECJQQ8T-1.png" alt="THM Pre Security" loading="lazy"><div class="cert-overlay"><span class="cert-overlay-icon">View</span></div></div>
+      <div class="cert-info"><div class="cert-title">Pre Security Learning Path</div><span class="cert-tag tag-thm">TryHackMe</span></div>
+    </div>
+
+    <div class="cert-card" data-cat="ctf" style="animation-delay:0.12s" onclick="openLightbox(3)">
+      <div class="cert-img-wrap"><img src="images/naham2.png" alt="NahamCon 2025" loading="lazy"><div class="cert-overlay"><span class="cert-overlay-icon">View</span></div></div>
+      <div class="cert-info"><div class="cert-title">NahamCon CTF 2025</div><span class="cert-tag tag-ctf">CTF</span></div>
+    </div>
+
+    <div class="cert-card" data-cat="ctf" style="animation-delay:0.15s" onclick="openLightbox(4)">
+      <div class="cert-img-wrap"><img src="images/noobz.png" alt="n00bzCTF 2024" loading="lazy"><div class="cert-overlay"><span class="cert-overlay-icon">View</span></div></div>
+      <div class="cert-info"><div class="cert-title">n00bzCTF 2024</div><span class="cert-tag tag-ctf">CTF</span></div>
+    </div>
+
+    <div class="cert-card" data-cat="ctf" style="animation-delay:0.18s" onclick="openLightbox(5)">
+      <div class="cert-img-wrap"><img src="images/ImaginaryCTF_2025___Certificate_Generator2-1.png" alt="ImaginaryCTF 2025" loading="lazy"><div class="cert-overlay"><span class="cert-overlay-icon">View</span></div></div>
+      <div class="cert-info"><div class="cert-title">ImaginaryCTF 2025</div><span class="cert-tag tag-ctf">CTF</span></div>
+    </div>
+
+    <div class="cert-card" data-cat="ctf" style="animation-delay:0.21s" onclick="openLightbox(6)">
+      <div class="cert-img-wrap"><img src="images/vishwactf_page-0001.jpg" alt="VishwaCTF" loading="lazy"><div class="cert-overlay"><span class="cert-overlay-icon">View</span></div></div>
+      <div class="cert-info"><div class="cert-title">VishwaCTF</div><span class="cert-tag tag-ctf">CTF</span></div>
+    </div>
+
+    <div class="cert-card" data-cat="ctf" style="animation-delay:0.24s" onclick="openLightbox(7)">
+      <div class="cert-img-wrap"><img src="images/questcon_page-0001.jpg" alt="QuestCon CTF" loading="lazy"><div class="cert-overlay"><span class="cert-overlay-icon">View</span></div></div>
+      <div class="cert-info"><div class="cert-title">QuestCon CTF</div><span class="cert-tag tag-ctf">CTF</span></div>
+    </div>
+
+    <div class="cert-card" data-cat="ctf" style="animation-delay:0.27s" onclick="openLightbox(8)">
+      <div class="cert-img-wrap"><img src="images/DawgCTF_2025_Certificate.png" alt="DawgCTF 2025" loading="lazy"><div class="cert-overlay"><span class="cert-overlay-icon">View</span></div></div>
+      <div class="cert-info"><div class="cert-title">DawgCTF 2025</div><span class="cert-tag tag-ctf">CTF</span></div>
+    </div>
+
+    <div class="cert-card" data-cat="ctf" style="animation-delay:0.30s" onclick="openLightbox(9)">
+      <div class="cert-img-wrap"><img src="images/pctf-cert_1_.png" alt="PatriotCTF 2024 BR4CU" loading="lazy"><div class="cert-overlay"><span class="cert-overlay-icon">View</span></div></div>
+      <div class="cert-info"><div class="cert-title">PatriotCTF 2024 — BR4CU BL1ND3R5</div><span class="cert-tag tag-ctf">CTF</span></div>
+    </div>
+
+    <div class="cert-card" data-cat="ctf" style="animation-delay:0.33s" onclick="openLightbox(10)">
+      <div class="cert-img-wrap"><img src="images/pctf-cert.png" alt="PatriotCTF 2024 Bloodborne" loading="lazy"><div class="cert-overlay"><span class="cert-overlay-icon">View</span></div></div>
+      <div class="cert-info"><div class="cert-title">PatriotCTF 2024 — Bloodborne</div><span class="cert-tag tag-ctf">CTF</span></div>
+    </div>
+
+    <div class="cert-card" data-cat="ctf" style="animation-delay:0.36s" onclick="openLightbox(11)">
+      <div class="cert-img-wrap"><img src="images/Muktadirul_Alam_Sowad-4-1.png" alt="BUET CSE Fest CTF 2024" loading="lazy"><div class="cert-overlay"><span class="cert-overlay-icon">View</span></div></div>
+      <div class="cert-info"><div class="cert-title">BUET CSE Fest CTF 2024 — 11th</div><span class="cert-tag tag-ctf">CTF</span></div>
+    </div>
+
+    <div class="cert-card" data-cat="dev" style="animation-delay:0.39s" onclick="openLightbox(12)">
+      <div class="cert-img-wrap"><img src="images/meta_page-0001.jpg" alt="Meta JS" loading="lazy"><div class="cert-overlay"><span class="cert-overlay-icon">View</span></div></div>
+      <div class="cert-info"><div class="cert-title">Programming with JavaScript — Meta</div><span class="cert-tag tag-dev">Development</span></div>
+    </div>
+
+    <div class="cert-card" data-cat="dev" style="animation-delay:0.42s" onclick="openLightbox(13)">
+      <div class="cert-img-wrap"><img src="images/python_basic_certificate_page-0001.jpg" alt="Python HackerRank" loading="lazy"><div class="cert-overlay"><span class="cert-overlay-icon">View</span></div></div>
+      <div class="cert-info"><div class="cert-title">Python Basic — HackerRank</div><span class="cert-tag tag-dev">Development</span></div>
+    </div>
+
+    <div class="cert-card" data-cat="dev" style="animation-delay:0.45s" onclick="openLightbox(14)">
+      <div class="cert-img-wrap"><img src="images/problem_solving_basic_certificate_page-0001.jpg" alt="Problem Solving HackerRank" loading="lazy"><div class="cert-overlay"><span class="cert-overlay-icon">View</span></div></div>
+      <div class="cert-info"><div class="cert-title">Problem Solving Basic — HackerRank</div><span class="cert-tag tag-dev">Development</span></div>
+    </div>
+
+    <div class="cert-card" data-cat="dev" style="animation-delay:0.48s" onclick="openLightbox(15)">
+      <div class="cert-img-wrap"><img src="images/sql_basic_certificate-1.jpg" alt="SQL HackerRank" loading="lazy"><div class="cert-overlay"><span class="cert-overlay-icon">View</span></div></div>
+      <div class="cert-info"><div class="cert-title">SQL Basic — HackerRank</div><span class="cert-tag tag-dev">Development</span></div>
+    </div>
+
+    <div class="cert-card" data-cat="course" style="animation-delay:0.51s" onclick="openLightbox(16)">
+      <div class="cert-img-wrap"><img src="images/MD__Muktadirul_Alam_Sowad_docx-1.png" alt="GHEA21 Conference" loading="lazy"><div class="cert-overlay"><span class="cert-overlay-icon">View</span></div></div>
+      <div class="cert-info"><div class="cert-title">GHEA21 Virtual Leadership Conf. 2025</div><span class="cert-tag tag-course">Course</span></div>
+    </div>
+
+    <div class="cert-card" data-cat="course" style="animation-delay:0.54s" onclick="openLightbox(17)">
+      <div class="cert-img-wrap"><img src="images/BSRS_page-0001.jpg" alt="BSRS Astro Carnival" loading="lazy"><div class="cert-overlay"><span class="cert-overlay-icon">View</span></div></div>
+      <div class="cert-info"><div class="cert-title">BSRS 2nd National Astro Carnival</div><span class="cert-tag tag-course">Course</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightboxOnBg(event)">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" onclick="closeLightbox()">[ close × ]</button>
+    <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)">‹</button>
+    <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)">›</button>
+    <img id="lightboxImg" src="" alt="">
+    <div class="lightbox-caption" id="lightboxCaption"></div>
+  </div>
+</div>
+
+<footer><p>© <span>Muktadirul Alam Sowad</span> — Certificates & Credentials</p></footer>
+
+<script>
+  // Matrix Rain
+  const canvas = document.getElementById('matrix-canvas');
+  const ctx = canvas.getContext('2d');
+  const chars = 'アイウエオカキクケコサシスセソタチツテトABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
+  let cols, drops;
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; cols = Math.floor(canvas.width / 16); drops = Array(cols).fill(1); }
+  resize();
+  window.addEventListener('resize', resize);
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(8,12,16,0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.font = '14px "Share Tech Mono", monospace';
+    for (let i = 0; i < drops.length; i++) {
+      const char = chars[Math.floor(Math.random() * chars.length)];
+      const bright = Math.random() > 0.95;
+      ctx.fillStyle = bright ? '#ffffff' : '#00ff88';
+      ctx.globalAlpha = bright ? 0.9 : (0.3 + Math.random() * 0.5);
+      ctx.fillText(char, i * 16, drops[i] * 16); ctx.globalAlpha = 1;
+      if (drops[i] * 16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+  }
+  setInterval(drawMatrix, 50);
+
+  // Filter
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const cards = document.querySelectorAll('.cert-card');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      let visible = 0;
+      cards.forEach(card => {
+        const match = filter === 'all' || card.dataset.cat === filter;
+        card.style.display = match ? 'block' : 'none';
+        if (match) visible++;
+      });
+      document.getElementById('visibleCount').textContent = visible;
+    });
+  });
+
+  // Lightbox
+  const images = [
+    { src: 'images/1766729365453.jpg',                               title: 'TryHackMe — Advent of Cyber 2025' },
+    { src: 'images/1771497274578.jpg',                               title: 'TryHackMe — Cyber Security 101 Learning Path' },
+    { src: 'images/THM-MUTECJQQ8T-1.png',                           title: 'TryHackMe — Pre Security Learning Path' },
+    { src: 'images/naham2.png',                                      title: 'NahamCon CTF 2025' },
+    { src: 'images/noobz.png',                                       title: 'n00bzCTF 2024' },
+    { src: 'images/ImaginaryCTF_2025___Certificate_Generator2-1.png',title: 'ImaginaryCTF 2025' },
+    { src: 'images/vishwactf_page-0001.jpg',                         title: 'VishwaCTF' },
+    { src: 'images/questcon_page-0001.jpg',                          title: 'QuestCon CTF' },
+    { src: 'images/DawgCTF_2025_Certificate.png',                    title: 'DawgCTF 2025' },
+    { src: 'images/pctf-cert_1_.png',                                title: 'PatriotCTF 2024 — BR4CU BL1ND3R5 · 275th/1361' },
+    { src: 'images/pctf-cert.png',                                   title: 'PatriotCTF 2024 — Bloodborne · 294th/1361' },
+    { src: 'images/Muktadirul_Alam_Sowad-4-1.png',                   title: 'BUET CSE Fest CTF 2024 — 11th Place' },
+    { src: 'images/meta_page-0001.jpg',                              title: 'Programming with JavaScript — Meta / Coursera' },
+    { src: 'images/python_basic_certificate_page-0001.jpg',          title: 'Python Basic — HackerRank' },
+    { src: 'images/problem_solving_basic_certificate_page-0001.jpg', title: 'Problem Solving Basic — HackerRank' },
+    { src: 'images/sql_basic_certificate-1.jpg',                     title: 'SQL Basic — HackerRank' },
+    { src: 'images/MD__Muktadirul_Alam_Sowad_docx-1.png',            title: 'GHEA21 Virtual Student Leadership Conference 2025' },
+    { src: 'images/BSRS_page-0001.jpg',                              title: 'BSRS 2nd National Astro Carnival 2022' },
+  ];
+
+  let currentIdx = 0;
+  function openLightbox(idx) {
+    currentIdx = idx;
+    document.getElementById('lightboxImg').src = images[idx].src;
+    document.getElementById('lightboxCaption').textContent = `${images[idx].title}  ·  ${idx + 1} / ${images.length}`;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow = ''; }
+  function closeLightboxOnBg(e) { if (e.target === document.getElementById('lightbox')) closeLightbox(); }
+  function navigateLightbox(dir) {
+    currentIdx = (currentIdx + dir + images.length) % images.length;
+    document.getElementById('lightboxImg').src = images[currentIdx].src;
+    document.getElementById('lightboxCaption').textContent = `${images[currentIdx].title}  ·  ${currentIdx + 1} / ${images.length}`;
+  }
+  document.addEventListener('keydown', e => {
+    if (!document.getElementById('lightbox').classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') navigateLightbox(-1);
+    if (e.key === 'ArrowRight') navigateLightbox(1);
+  });
+</script>
+</body>
+</html>

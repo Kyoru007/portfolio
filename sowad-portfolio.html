@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muktadirul Alam Sowad — CTF Player | Red Teamer | Web Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #080c10;
+    --surface: #0d1117;
+    --surface2: #161b22;
+    --accent: #00ff88;
+    --accent2: #00c8ff;
+    --accent3: #ff5555;
+    --text: #e6edf3;
+    --muted: #7d8590;
+    --border: rgba(0,255,136,0.15);
+    --glow: 0 0 20px rgba(0,255,136,0.2);
+    --mono: 'Share Tech Mono', monospace;
+    --display: 'Share Tech Mono', monospace;
+    --body: 'Share Tech Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  #matrix-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.18;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 4rem;
+    background: rgba(8,12,16,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+  .nav-logo span { color: var(--muted); }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-links a::before {
+    content: '> ';
+    color: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a:hover::before { opacity: 1; }
+
+  /* ─── HERO ─── */
+  #hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 4rem 4rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .hero-tag {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1.hero-name {
+    font-family: var(--display);
+    font-size: clamp(3rem, 7vw, 6rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-name .accent { color: var(--accent); }
+
+  .hero-roles {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent2);
+    margin-bottom: 2rem;
+    letter-spacing: 0.05em;
+  }
+  .hero-roles span { color: var(--muted); margin: 0 0.5rem; }
+
+  .hero-quote {
+    max-width: 600px;
+    border-left: 2px solid var(--accent);
+    padding-left: 1.5rem;
+    margin-bottom: 3rem;
+    color: var(--muted);
+    font-size: 15px;
+    font-style: italic;
+    line-height: 1.6;
+  }
+  .hero-quote cite {
+    display: block;
+    margin-top: 0.5rem;
+    font-style: normal;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.8rem 2rem;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    background: transparent;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: translateX(-100%);
+    transition: transform 0.2s;
+  }
+  .btn:hover { color: var(--bg); }
+  .btn:hover::before { transform: translateX(0); }
+  .btn span { position: relative; z-index: 1; }
+
+  .btn-ghost {
+    border-color: var(--muted);
+    color: var(--muted);
+  }
+  .btn-ghost::before { background: var(--muted); }
+  .btn-ghost:hover { color: var(--bg); }
+
+  /* scroll indicator */
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    animation: bounce 2s infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(6px); }
+  }
+
+  /* ─── SECTIONS ─── */
+  section {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 6rem 4rem;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    max-width: 60px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h2.section-title {
+    font-family: var(--display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 3rem;
+  }
+
+  /* ─── ABOUT ─── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .about-text p {
+    color: var(--muted);
+    margin-bottom: 1.25rem;
+    font-size: 15px;
+  }
+  .about-text a {
+    color: var(--accent2);
+    text-decoration: none;
+  }
+  .about-text a:hover { text-decoration: underline; }
+
+  .about-terminal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: var(--glow);
+  }
+  .terminal-bar {
+    background: var(--surface2);
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #ffbd2e; }
+  .dot-g { background: #28c840; }
+  .terminal-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: 0.5rem;
+  }
+  .terminal-body {
+    padding: 1.5rem;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.9;
+  }
+  .t-prompt { color: var(--accent); }
+  .t-cmd { color: var(--text); }
+  .t-out { color: var(--muted); padding-left: 1.5rem; display: block; }
+  .t-key { color: var(--accent2); }
+  .cursor {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: var(--accent);
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+
+
+  /* ─── KDRAMA ─── */
+  .kdrama-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .kdrama-card {
+    background: var(--surface);
+    border: 1px solid rgba(0,200,255,0.15);
+    padding: 2rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .kdrama-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--accent2);
+  }
+  .kdrama-card:hover {
+    border-color: rgba(0,200,255,0.4);
+    box-shadow: 0 0 20px rgba(0,200,255,0.15);
+  }
+
+  .kdrama-rank {
+    font-family: var(--mono);
+    font-size: 48px;
+    font-weight: 700;
+    color: rgba(0,200,255,0.1);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .kdrama-card h3 {
+    font-family: var(--display);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+  }
+  .kdrama-card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ─── SOCIALS ─── */
+  #socials {
+    border-top: 1px solid var(--border);
+  }
+
+  .socials-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .social-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: all 0.2s;
+  }
+  .social-card:hover {
+    border-color: rgba(0,255,136,0.4);
+    box-shadow: var(--glow);
+    transform: translateY(-3px);
+  }
+
+  .social-icon {
+    width: 36px; height: 36px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .social-name {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+  }
+  .social-handle {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .discord-banner {
+    background: var(--surface);
+    border: 1px solid rgba(88,101,242,0.3);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .discord-text {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .discord-text strong { color: #7289da; }
+  .btn-discord {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.5rem;
+    background: rgba(88,101,242,0.15);
+    border: 1px solid rgba(88,101,242,0.4);
+    color: #7289da;
+    text-decoration: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-discord:hover {
+    background: rgba(88,101,242,0.3);
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 3rem;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  footer span { color: var(--accent); }
+
+  /* ─── DIVIDER ─── */
+  .section-divider {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 4rem;
+  }
+  .section-divider hr {
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Animate on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Shuffle name letter spans */
+  #shuffle-name {
+    font-family: 'Share Tech Mono', monospace !important;
+    line-height: 1.05 !important;
+  }
+  #shuffle-name .letter {
+    display: inline-block;
+    width: 0.62em;
+    height: 1.1em;
+    overflow: hidden;
+    vertical-align: bottom;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: 1.1;
+    color: var(--accent);
+    text-align: center;
+  }
+  #shuffle-name .letter.is-space {
+    width: 0.28em;
+  }
+  #shuffle-name .letter.resolved {
+    color: var(--text);
+  }
+  #shuffle-name .letter.accent-word.resolved {
+    color: var(--accent);
+  }
+
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { gap: 1rem; }
+    section { padding: 4rem 1.5rem; }
+    #hero { padding: 7rem 1.5rem 4rem; }
+    .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .kdrama-grid { grid-template-columns: 1fr; }
+    .socials-grid { grid-template-columns: repeat(2, 1fr); }
+    .discord-banner { flex-direction: column; align-items: flex-start; }
+  
+</style>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><span>~/</span>sowad<span>.sh</span></div>
+  <ul class="nav-links">
+    <li><a href="#about">about</a></li>
+    <li><a href="#kdrama">k-drama</a></li>
+    <li><a href="#socials">contact</a></li>
+    <li><a href="sowad-certs.html">certs</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="hero-tag">Security Researcher & Developer</div>
+  <h1 class="hero-name" id="shuffle-name" aria-label="Muktadirul Alam Sowad"></h1>
+  <div class="hero-roles">CTF Player <span>|</span> Web Developer <span>|</span> Red Teamer</div>
+  <blockquote class="hero-quote">
+    "The people who are crazy enough to think they can change the world are the ones who do."
+    <cite>— Edward Snowden</cite>
+  </blockquote>
+  <div class="hero-cta">
+    <a href="#about" class="btn"><span>Explore Profile</span></a>
+    <a href="#socials" class="btn btn-ghost"><span>Get In Touch</span></a>
+  </div>
+  <div class="scroll-hint">scroll ↓</div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label">01 — whoami</div>
+  <h2 class="section-title">About</h2>
+  <div class="about-grid reveal">
+    <div class="about-text">
+      <p>A passionate CTF player, skilled web developer, and dedicated Red Team enthusiast with a unique drive for understanding and improving cybersecurity from the inside out.</p>
+      <p>I tackle challenges with an inquisitive mind, seeing opportunities where others see obstacles, and striving to make systems more resilient.</p>
+      <p>In the world of cybersecurity, those who are "crazy enough" to challenge norms and question vulnerabilities play a crucial role in shaping a safer digital landscape.</p>
+      <p>CTFs are where it all comes together — the thrill of the challenge, the creativity of the solution. Want to know more about CTFs? Click <a href="https://ctftime.org/" target="_blank">here →</a></p>
+      <p>Like Snowden, my commitment to pushing boundaries and questioning the status quo fuels meaningful change and keeps me at the cutting edge of security.</p>
+    </div>
+    <div class="about-terminal">
+      <div class="terminal-bar">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <span class="terminal-title">sowad@kali: ~</span>
+      </div>
+      <div class="terminal-body">
+        <div><span class="t-prompt">sowad@kali:~$ </span><span class="t-cmd">cat profile.json</span></div>
+        <span class="t-out">{</span>
+        <span class="t-out">&nbsp;&nbsp;<span class="t-key">"name"</span>: "Muktadirul Alam Sowad",</span>
+        <span class="t-out">&nbsp;&nbsp;<span class="t-key">"roles"</span>: [</span>
+        <span class="t-out">&nbsp;&nbsp;&nbsp;&nbsp;"CTF Player",</span>
+        <span class="t-out">&nbsp;&nbsp;&nbsp;&nbsp;"Web Developer",</span>
+        <span class="t-out">&nbsp;&nbsp;&nbsp;&nbsp;"Red Teamer"</span>
+        <span class="t-out">&nbsp;&nbsp;],</span>
+        <span class="t-out">&nbsp;&nbsp;<span class="t-key">"university"</span>: "BRAC University",</span>
+        <span class="t-out">&nbsp;&nbsp;<span class="t-key">"focus"</span>: "Offensive Security",</span>
+        <span class="t-out">&nbsp;&nbsp;<span class="t-key">"status"</span>: "Actively hacking"</span>
+        <span class="t-out">}</span>
+        <div style="margin-top:0.75rem"><span class="t-prompt">sowad@kali:~$ </span><span class="cursor"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KDRAMA -->
+<section id="kdrama">
+  <div class="section-label">02 — off-duty</div>
+  <h2 class="section-title">Top K-Dramas</h2>
+  <div class="kdrama-grid reveal">
+    <div class="kdrama-card">
+      <div class="kdrama-rank">01</div>
+      <h3>Descendants of the Sun</h3>
+      <p>An epic romance between a soldier and a doctor who face love and duty amid life-threatening missions and humanitarian work.</p>
+    </div>
+    <div class="kdrama-card">
+      <div class="kdrama-rank">02</div>
+      <h3>Crash Landing on You</h3>
+      <p>A South Korean heiress and a North Korean soldier find love across borders. A mix of romance, action, and heartwarming moments.</p>
+    </div>
+    <div class="kdrama-card">
+      <div class="kdrama-rank">03</div>
+      <h3>Start-Up</h3>
+      <p>Set in South Korea's Silicon Valley, the series follows young entrepreneurs navigating love, ambition, and the challenges of start-up culture.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"><hr></div>
+
+<!-- SOCIALS -->
+<section id="socials">
+  <div class="section-label">03 — connect</div>
+  <h2 class="section-title">Find Me Online</h2>
+  <div class="socials-grid reveal">
+    <a class="social-card" href="https://www.linkedin.com/in/muktadirul-alam-sowad-a08446260/" target="_blank">
+      <div class="social-icon" style="background:rgba(0,119,181,0.15); color:#0077b5;">in</div>
+      <div class="social-name">LinkedIn</div>
+      <div class="social-handle">muktadirul-alam-sowad</div>
+    </a>
+    <a class="social-card" href="https://www.instagram.com/stellarknight009/" target="_blank">
+      <div class="social-icon" style="background:rgba(225,48,108,0.15); color:#e1306c;">ig</div>
+      <div class="social-name">Instagram</div>
+      <div class="social-handle">@stellarknight009</div>
+    </a>
+    <a class="social-card" href="https://www.facebook.com/yourprofile" target="_blank">
+      <div class="social-icon" style="background:rgba(24,119,242,0.15); color:#1877f2;">fb</div>
+      <div class="social-name">Facebook</div>
+      <div class="social-handle">Muktadirul Alam Sowad</div>
+    </a>
+    <a class="social-card" href="https://ctftime.org/" target="_blank">
+      <div class="social-icon" style="background:rgba(0,255,136,0.1); color:var(--accent);">⚑</div>
+      <div class="social-name">CTFtime</div>
+      <div class="social-handle">CTF Rankings</div>
+    </a>
+  </div>
+  <div class="discord-banner reveal">
+    <div class="discord-text">
+      Want to join the <strong>CSE391 Discord Group</strong>? Study, discuss, and collaborate with classmates.
+    </div>
+    <a href="https://discord.gg/3pBTRHnE" target="_blank" class="btn-discord">Join Discord →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© <span>Muktadirul Alam Sowad</span> — Built with intention, secured by curiosity.</p>
+  <p style="margin-top:0.5rem; font-size:11px;">Dhaka, Bangladesh</p>
+</footer>
+
+<script>
+  // ── Matrix Rain ──
+  const canvas = document.getElementById('matrix-canvas');
+  const ctx = canvas.getContext('2d');
+  const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
+  let cols, drops;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    cols = Math.floor(canvas.width / 16);
+    drops = Array(cols).fill(1);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(8,12,16,0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.font = '14px "Share Tech Mono", monospace';
+    for (let i = 0; i < drops.length; i++) {
+      const char = chars[Math.floor(Math.random() * chars.length)];
+      const bright = Math.random() > 0.95;
+      ctx.fillStyle = bright ? '#ffffff' : '#00ff88';
+      ctx.globalAlpha = bright ? 0.9 : (0.3 + Math.random() * 0.5);
+      ctx.fillText(char, i * 16, drops[i] * 16);
+      ctx.globalAlpha = 1;
+      if (drops[i] * 16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+  }
+  setInterval(drawMatrix, 50);
+
+  // ── Reveal on scroll ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+
+  // ── Shuffle Name ──
+  (function() {
+    const name = "Muktadirul\nAlam Sowad";
+    // Only uppercase letters — uniform width in monospace, no shaking
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const accentStart = name.indexOf("Sowad");
+    const container = document.getElementById('shuffle-name');
+
+    const spans = [];
+    for (let i = 0; i < name.length; i++) {
+      const ch = name[i];
+      if (ch === '\n') {
+        container.appendChild(document.createElement('br'));
+        continue;
+      }
+      const span = document.createElement('span');
+      if (ch === ' ') {
+        span.className = 'letter is-space';
+        span.textContent = '\u00A0';
+      } else {
+        span.className = 'letter';
+        span.textContent = chars[Math.floor(Math.random() * chars.length)];
+      }
+      container.appendChild(span);
+      spans.push({ el: span, original: ch, index: i, isSpace: ch === ' ', isAccent: i >= accentStart });
+    }
+
+    const letterSpans = spans.filter(s => !s.isSpace);
+
+    // Shuffle all unresolved letters
+    const shuffleTimer = setInterval(() => {
+      letterSpans.forEach(s => {
+        if (!s.resolved) {
+          s.el.textContent = chars[Math.floor(Math.random() * chars.length)];
+        }
+      });
+    }, 50);
+
+    // Resolve left to right
+    let resolveIdx = 0;
+    function resolveNext() {
+      if (resolveIdx >= letterSpans.length) {
+        clearInterval(shuffleTimer);
+        return;
+      }
+      const s = letterSpans[resolveIdx];
+      s.el.textContent = s.original;
+      s.el.classList.add('resolved');
+      if (s.isAccent) s.el.classList.add('accent-word');
+      s.resolved = true;
+      resolveIdx++;
+      const delay = resolveIdx < 4 ? 120 : resolveIdx < 9 ? 70 : 35;
+      setTimeout(resolveNext, delay);
+    }
+
+    setTimeout(resolveNext, 400);
+  })();
+
+</script>
+</body>
+</html>
