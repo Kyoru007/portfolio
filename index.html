@@ -5,530 +5,138 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Muktadirul Alam Sowad — CTF Player | Red Teamer | Web Developer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080c10;--surface:#0d1117;--surface2:#161b22;
+  --accent:#00ff88;--accent2:#00c8ff;--text:#e6edf3;--muted:#7d8590;
+  --border:rgba(0,255,136,0.15);--glow:0 0 20px rgba(0,255,136,0.2);
+  --mono:'Share Tech Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:16px;line-height:1.7;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:1000}
 
-  :root {
-    --bg: #080c10;
-    --surface: #0d1117;
-    --surface2: #161b22;
-    --accent: #00ff88;
-    --accent2: #00c8ff;
-    --accent3: #ff5555;
-    --text: #e6edf3;
-    --muted: #7d8590;
-    --border: rgba(0,255,136,0.15);
-    --glow: 0 0 20px rgba(0,255,136,0.2);
-    --mono: 'Share Tech Mono', monospace;
-    --display: 'Share Tech Mono', monospace;
-    --body: 'Share Tech Mono', monospace;
-  }
+#matrix-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.18}
 
-  html { scroll-behavior: smooth; }
+nav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;align-items:center;justify-content:space-between;padding:1rem 4rem;background:rgba(8,12,16,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-logo{font-size:13px;color:var(--accent);letter-spacing:0.05em}
+.nav-logo span{color:var(--muted)}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{font-size:12px;color:var(--muted);text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s;position:relative}
+.nav-links a::before{content:'> ';color:var(--accent);opacity:0;transition:opacity 0.2s}
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover::before{opacity:1}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--body);
-    font-size: 16px;
-    line-height: 1.7;
-    overflow-x: hidden;
-  }
+#hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:8rem 4rem 4rem;max-width:1100px;margin:0 auto}
+.hero-tag{font-size:12px;color:var(--accent);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.75rem}
+.hero-tag::before{content:'';width:40px;height:1px;background:var(--accent)}
+h1.hero-name{font-size:clamp(3rem,7vw,6rem);font-weight:400;line-height:1.05;letter-spacing:-0.01em;margin-bottom:0.5rem}
+.hero-name .accent{color:var(--accent)}
+.hero-roles{font-size:14px;color:var(--accent2);margin-bottom:2rem;letter-spacing:0.05em}
+.hero-roles span{color:var(--muted);margin:0 0.5rem}
+.hero-quote{max-width:600px;border-left:2px solid var(--accent);padding-left:1.5rem;margin-bottom:3rem;color:var(--muted);font-size:15px;font-style:italic;line-height:1.6}
+.hero-quote cite{display:block;margin-top:0.5rem;font-style:normal;font-size:12px;color:var(--accent)}
+.hero-cta{display:flex;gap:1rem;flex-wrap:wrap}
+.btn{font-size:12px;letter-spacing:0.1em;text-transform:uppercase;padding:0.8rem 2rem;border:1px solid var(--accent);color:var(--accent);background:transparent;text-decoration:none;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden}
+.btn::before{content:'';position:absolute;inset:0;background:var(--accent);transform:translateX(-100%);transition:transform 0.2s}
+.btn:hover{color:var(--bg)}
+.btn:hover::before{transform:translateX(0)}
+.btn span{position:relative;z-index:1}
+.btn-ghost{border-color:var(--muted);color:var(--muted)}
+.btn-ghost::before{background:var(--muted)}
+.btn-ghost:hover{color:var(--bg)}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);font-size:11px;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
 
-  /* Scanline overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
-    pointer-events: none;
-    z-index: 1000;
-  }
+section{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:6rem 4rem}
+.section-label{font-size:11px;color:var(--accent);letter-spacing:0.25em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.75rem}
+.section-label::after{content:'';flex:1;max-width:60px;height:1px;background:var(--accent)}
+h2.section-title{font-size:clamp(2rem,4vw,3rem);font-weight:400;letter-spacing:-0.01em;margin-bottom:3rem}
 
-  #matrix-canvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.18;
-  }
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+.about-text p{color:var(--muted);margin-bottom:1.25rem;font-size:15px}
+.about-text a{color:var(--accent2);text-decoration:none}
+.about-text a:hover{text-decoration:underline}
+.about-terminal{background:var(--surface);border:1px solid var(--border);overflow:hidden;box-shadow:var(--glow)}
+.terminal-bar{background:var(--surface2);padding:0.6rem 1rem;display:flex;align-items:center;gap:0.5rem;border-bottom:1px solid var(--border)}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot-r{background:#ff5f57}.dot-y{background:#ffbd2e}.dot-g{background:#28c840}
+.terminal-title{font-size:11px;color:var(--muted);margin-left:0.5rem}
+.terminal-body{padding:1.5rem;font-size:13px;line-height:1.9}
+.t-prompt{color:var(--accent)}.t-cmd{color:var(--text)}.t-out{color:var(--muted);padding-left:1.5rem;display:block}.t-key{color:var(--accent2)}
+.cursor{display:inline-block;width:8px;height:14px;background:var(--accent);vertical-align:middle;animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
 
-  /* ─── NAV ─── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 900;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 4rem;
-    background: rgba(8,12,16,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
+.kdrama-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.kdrama-card{background:var(--surface);border:1px solid rgba(0,200,255,0.15);padding:2rem 1.5rem;position:relative;overflow:hidden;transition:border-color 0.2s,box-shadow 0.2s}
+.kdrama-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--accent2)}
+.kdrama-card:hover{border-color:rgba(0,200,255,0.4);box-shadow:0 0 20px rgba(0,200,255,0.15)}
+.kdrama-rank{font-size:48px;font-weight:700;color:rgba(0,200,255,0.1);line-height:1;margin-bottom:0.5rem}
+.kdrama-card h3{font-size:16px;font-weight:700;margin-bottom:0.75rem;color:var(--text)}
+.kdrama-card p{font-size:13px;color:var(--muted);line-height:1.6}
 
-  .nav-logo {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--accent);
-    letter-spacing: 0.05em;
-  }
-  .nav-logo span { color: var(--muted); }
+.section-divider{max-width:1100px;margin:0 auto;padding:0 4rem}
+.section-divider hr{border:none;border-top:1px solid var(--border)}
 
-  .nav-links {
-    display: flex;
-    gap: 2rem;
-    list-style: none;
-  }
-  .nav-links a {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-    text-decoration: none;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    transition: color 0.2s;
-    position: relative;
-  }
-  .nav-links a::before {
-    content: '> ';
-    color: var(--accent);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .nav-links a:hover { color: var(--text); }
-  .nav-links a:hover::before { opacity: 1; }
+.socials-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:3rem}
+.social-card{background:var(--surface);border:1px solid var(--border);padding:1.5rem;text-decoration:none;display:flex;flex-direction:column;gap:0.75rem;transition:all 0.2s}
+.social-card:hover{border-color:rgba(0,255,136,0.4);box-shadow:var(--glow);transform:translateY(-3px)}
+.social-icon{width:36px;height:36px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.social-name{font-size:13px;color:var(--text)}
+.social-handle{font-size:11px;color:var(--muted)}
+.discord-banner{background:var(--surface);border:1px solid rgba(88,101,242,0.3);padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.discord-text{font-size:13px;color:var(--muted)}
+.discord-text strong{color:#7289da}
+.btn-discord{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:0.6rem 1.5rem;background:rgba(88,101,242,0.15);border:1px solid rgba(88,101,242,0.4);color:#7289da;text-decoration:none;transition:all 0.2s;white-space:nowrap}
+.btn-discord:hover{background:rgba(88,101,242,0.3)}
 
-  /* ─── HERO ─── */
-  #hero {
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 8rem 4rem 4rem;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
+footer{position:relative;z-index:1;text-align:center;padding:3rem;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
+footer span{color:var(--accent)}
 
-  .hero-tag {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--accent);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .hero-tag::before {
-    content: '';
-    width: 40px;
-    height: 1px;
-    background: var(--accent);
-  }
+.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+.reveal.visible{opacity:1;transform:translateY(0)}
 
-  h1.hero-name {
-    font-family: var(--display);
-    font-size: clamp(3rem, 7vw, 6rem);
-    font-weight: 800;
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.5rem;
-  }
-
-  .hero-name .accent { color: var(--accent); }
-
-  .hero-roles {
-    font-family: var(--mono);
-    font-size: 14px;
-    color: var(--accent2);
-    margin-bottom: 2rem;
-    letter-spacing: 0.05em;
-  }
-  .hero-roles span { color: var(--muted); margin: 0 0.5rem; }
-
-  .hero-quote {
-    max-width: 600px;
-    border-left: 2px solid var(--accent);
-    padding-left: 1.5rem;
-    margin-bottom: 3rem;
-    color: var(--muted);
-    font-size: 15px;
-    font-style: italic;
-    line-height: 1.6;
-  }
-  .hero-quote cite {
-    display: block;
-    margin-top: 0.5rem;
-    font-style: normal;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--accent);
-  }
-
-  .hero-cta {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .btn {
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0.8rem 2rem;
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    background: transparent;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-  .btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--accent);
-    transform: translateX(-100%);
-    transition: transform 0.2s;
-  }
-  .btn:hover { color: var(--bg); }
-  .btn:hover::before { transform: translateX(0); }
-  .btn span { position: relative; z-index: 1; }
-
-  .btn-ghost {
-    border-color: var(--muted);
-    color: var(--muted);
-  }
-  .btn-ghost::before { background: var(--muted); }
-  .btn-ghost:hover { color: var(--bg); }
-
-  /* scroll indicator */
-  .scroll-hint {
-    position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    animation: bounce 2s infinite;
-  }
-  @keyframes bounce {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(6px); }
-  }
-
-  /* ─── SECTIONS ─── */
-  section {
-    position: relative;
-    z-index: 1;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 6rem 4rem;
-  }
-
-  .section-label {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--accent);
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    margin-bottom: 0.75rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .section-label::after {
-    content: '';
-    flex: 1;
-    max-width: 60px;
-    height: 1px;
-    background: var(--accent);
-  }
-
-  h2.section-title {
-    font-family: var(--display);
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin-bottom: 3rem;
-  }
-
-  /* ─── ABOUT ─── */
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: start;
-  }
-
-  .about-text p {
-    color: var(--muted);
-    margin-bottom: 1.25rem;
-    font-size: 15px;
-  }
-  .about-text a {
-    color: var(--accent2);
-    text-decoration: none;
-  }
-  .about-text a:hover { text-decoration: underline; }
-
-  .about-terminal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-    box-shadow: var(--glow);
-  }
-  .terminal-bar {
-    background: var(--surface2);
-    padding: 0.6rem 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    border-bottom: 1px solid var(--border);
-  }
-  .dot { width: 10px; height: 10px; border-radius: 50%; }
-  .dot-r { background: #ff5f57; }
-  .dot-y { background: #ffbd2e; }
-  .dot-g { background: #28c840; }
-  .terminal-title {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-    margin-left: 0.5rem;
-  }
-  .terminal-body {
-    padding: 1.5rem;
-    font-family: var(--mono);
-    font-size: 13px;
-    line-height: 1.9;
-  }
-  .t-prompt { color: var(--accent); }
-  .t-cmd { color: var(--text); }
-  .t-out { color: var(--muted); padding-left: 1.5rem; display: block; }
-  .t-key { color: var(--accent2); }
-  .cursor {
-    display: inline-block;
-    width: 8px; height: 14px;
-    background: var(--accent);
-    vertical-align: middle;
-    animation: blink 1s step-end infinite;
-  }
-  @keyframes blink { 50% { opacity: 0; } }
+/* Projects */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.5rem}
+.project-card{background:var(--surface);border:1px solid var(--border);padding:2rem;position:relative;transition:border-color 0.25s,box-shadow 0.25s,transform 0.25s}
+.project-card:hover{border-color:rgba(0,255,136,0.45);box-shadow:var(--glow);transform:translateY(-4px)}
+.project-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.project-icon{font-size:24px;color:var(--accent);opacity:0.7}
+.project-link{font-size:12px;color:var(--accent2);text-decoration:none;letter-spacing:0.05em;border:1px solid rgba(0,200,255,0.3);padding:0.25rem 0.75rem;transition:all 0.2s}
+.project-link:hover{background:rgba(0,200,255,0.1);border-color:var(--accent2)}
+.project-name{font-size:17px;font-weight:400;color:var(--text);margin-bottom:0.75rem;letter-spacing:0.02em}
+.project-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:1.25rem}
+.project-tags{display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1rem}
+.ptag{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;background:rgba(0,255,136,0.07);border:1px solid rgba(0,255,136,0.2);color:var(--accent)}
+.project-stats{display:flex;gap:1.25rem}
+.pstat{font-size:11px;color:var(--muted);letter-spacing:0.05em}
 
 
+#shuffle-name{font-family:var(--mono)!important;line-height:1.05!important}
+#shuffle-name .letter{display:inline-block;width:0.62em;height:1.1em;overflow:hidden;vertical-align:bottom;font-family:var(--mono);font-size:inherit;font-weight:inherit;line-height:1.1;color:var(--accent);text-align:center}
+#shuffle-name .letter.is-space{width:0.32em}
+#shuffle-name .letter.resolved{color:var(--text)}
+#shuffle-name .letter.accent-word.resolved{color:var(--accent)}
 
-  /* ─── KDRAMA ─── */
-  .kdrama-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
+/* Terminal Easter Egg */
+#et-wrap{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:min(760px,96vw);z-index:9800;transition:transform 0.4s cubic-bezier(0.22,1,0.36,1);display:flex;flex-direction:column;height:380px;background:#0d1117;border:1px solid rgba(0,255,136,0.35);border-bottom:none;border-radius:8px 8px 0 0;box-shadow:0 -8px 40px rgba(0,255,136,0.1);font-family:var(--mono)}
+#et-wrap.open{transform:translateX(-50%) translateY(0)}
+#et-bar{display:flex;align-items:center;justify-content:space-between;padding:0.55rem 1rem;background:#161b22;border-bottom:1px solid rgba(0,255,136,0.15);border-radius:8px 8px 0 0;flex-shrink:0}
+.et-dots{display:flex;gap:6px;align-items:center}
+.et-dot{width:11px;height:11px;border-radius:50%;cursor:pointer}
+#et-title{font-size:11px;color:#7d8590;letter-spacing:0.06em}
+#et-body{flex:1;overflow-y:auto;padding:0.75rem 1.25rem;display:flex;flex-direction:column;gap:1px;scrollbar-width:thin;scrollbar-color:rgba(0,255,136,0.2) transparent}
+.el{font-size:13px;line-height:1.75;color:#7d8590;white-space:pre-wrap;word-break:break-all}
+#et-row{display:flex;align-items:center;gap:8px;padding:0.55rem 1.25rem;border-top:1px solid rgba(0,255,136,0.15);flex-shrink:0}
+#et-ps{font-size:13px;color:#00ff88;white-space:nowrap}
+#et-in{flex:1;background:transparent;border:none;outline:none;font-family:var(--mono);font-size:13px;color:#e6edf3;caret-color:transparent}
+#et-cur{width:8px;height:15px;background:#00ff88;animation:blink 1s step-end infinite;flex-shrink:0}
+#et-hint{position:fixed;bottom:1.5rem;right:1.5rem;font-family:var(--mono);font-size:12px;color:#7d8590;background:#0d1117;border:1px solid rgba(0,255,136,0.2);padding:0.35rem 0.85rem;border-radius:4px;opacity:0;transition:opacity 0.6s;pointer-events:none;z-index:9700;letter-spacing:0.05em}
+#et-hint kbd{color:#00ff88}
 
-  .kdrama-card {
-    background: var(--surface);
-    border: 1px solid rgba(0,200,255,0.15);
-    padding: 2rem 1.5rem;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .kdrama-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 3px; height: 100%;
-    background: var(--accent2);
-  }
-  .kdrama-card:hover {
-    border-color: rgba(0,200,255,0.4);
-    box-shadow: 0 0 20px rgba(0,200,255,0.15);
-  }
-
-  .kdrama-rank {
-    font-family: var(--mono);
-    font-size: 48px;
-    font-weight: 700;
-    color: rgba(0,200,255,0.1);
-    line-height: 1;
-    margin-bottom: 0.5rem;
-  }
-  .kdrama-card h3 {
-    font-family: var(--display);
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-    color: var(--text);
-  }
-  .kdrama-card p {
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.6;
-  }
-
-  /* ─── SOCIALS ─── */
-  #socials {
-    border-top: 1px solid var(--border);
-  }
-
-  .socials-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-    margin-bottom: 3rem;
-  }
-
-  .social-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 1.5rem;
-    text-decoration: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    transition: all 0.2s;
-  }
-  .social-card:hover {
-    border-color: rgba(0,255,136,0.4);
-    box-shadow: var(--glow);
-    transform: translateY(-3px);
-  }
-
-  .social-icon {
-    width: 36px; height: 36px;
-    border-radius: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-  }
-  .social-name {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--text);
-  }
-  .social-handle {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-  }
-
-  .discord-banner {
-    background: var(--surface);
-    border: 1px solid rgba(88,101,242,0.3);
-    padding: 1.5rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-  .discord-text {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--muted);
-  }
-  .discord-text strong { color: #7289da; }
-  .btn-discord {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0.6rem 1.5rem;
-    background: rgba(88,101,242,0.15);
-    border: 1px solid rgba(88,101,242,0.4);
-    color: #7289da;
-    text-decoration: none;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  .btn-discord:hover {
-    background: rgba(88,101,242,0.3);
-  }
-
-  /* ─── FOOTER ─── */
-  footer {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    padding: 3rem;
-    border-top: 1px solid var(--border);
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-  }
-  footer span { color: var(--accent); }
-
-  /* ─── DIVIDER ─── */
-  .section-divider {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 4rem;
-  }
-  .section-divider hr {
-    border: none;
-    border-top: 1px solid var(--border);
-  }
-
-  /* Animate on scroll */
-  .reveal {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s, transform 0.6s;
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* Shuffle name letter spans */
-  #shuffle-name {
-    font-family: 'Share Tech Mono', monospace !important;
-    line-height: 1.05 !important;
-  }
-  #shuffle-name .letter {
-    display: inline-block;
-    width: 0.62em;
-    height: 1.1em;
-    overflow: hidden;
-    vertical-align: bottom;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: inherit;
-    font-weight: inherit;
-    line-height: 1.1;
-    color: var(--accent);
-    text-align: center;
-  }
-  #shuffle-name .letter.is-space {
-    width: 0.28em;
-  }
-  #shuffle-name .letter.resolved {
-    color: var(--text);
-  }
-  #shuffle-name .letter.accent-word.resolved {
-    color: var(--accent);
-  }
-
-    nav { padding: 1rem 1.5rem; }
-    .nav-links { gap: 1rem; }
-    section { padding: 4rem 1.5rem; }
-    #hero { padding: 7rem 1.5rem 4rem; }
-    .about-grid { grid-template-columns: 1fr; gap: 2rem; }
-    .kdrama-grid { grid-template-columns: 1fr; }
-    .socials-grid { grid-template-columns: repeat(2, 1fr); }
-    .discord-banner { flex-direction: column; align-items: flex-start; }
-  
+@media(max-width:768px){nav{padding:1rem 1.5rem}.nav-links{gap:1rem}section{padding:4rem 1.5rem}#hero{padding:7rem 1.5rem 4rem}.about-grid{grid-template-columns:1fr;gap:2rem}.kdrama-grid{grid-template-columns:1fr}.socials-grid{grid-template-columns:repeat(2,1fr)}.discord-banner{flex-direction:column;align-items:flex-start}}
 </style>
 </head>
 <body>
@@ -540,7 +148,7 @@
   <div class="nav-logo"><span>~/</span>sowad<span>.sh</span></div>
   <ul class="nav-links">
     <li><a href="#about">about</a></li>
-    <li><a href="#kdrama">k-drama</a></li>
+    <li><a href="#projects">projects</a></li>
     <li><a href="#socials">contact</a></li>
     <li><a href="sowad-certs.html">certs</a></li>
   </ul>
@@ -576,20 +184,14 @@
     </div>
     <div class="about-terminal">
       <div class="terminal-bar">
-        <div class="dot dot-r"></div>
-        <div class="dot dot-y"></div>
-        <div class="dot dot-g"></div>
+        <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
         <span class="terminal-title">sowad@kali: ~</span>
       </div>
       <div class="terminal-body">
         <div><span class="t-prompt">sowad@kali:~$ </span><span class="t-cmd">cat profile.json</span></div>
         <span class="t-out">{</span>
         <span class="t-out">&nbsp;&nbsp;<span class="t-key">"name"</span>: "Muktadirul Alam Sowad",</span>
-        <span class="t-out">&nbsp;&nbsp;<span class="t-key">"roles"</span>: [</span>
-        <span class="t-out">&nbsp;&nbsp;&nbsp;&nbsp;"CTF Player",</span>
-        <span class="t-out">&nbsp;&nbsp;&nbsp;&nbsp;"Web Developer",</span>
-        <span class="t-out">&nbsp;&nbsp;&nbsp;&nbsp;"Red Teamer"</span>
-        <span class="t-out">&nbsp;&nbsp;],</span>
+        <span class="t-out">&nbsp;&nbsp;<span class="t-key">"roles"</span>: ["CTF Player","Web Developer","Red Teamer"],</span>
         <span class="t-out">&nbsp;&nbsp;<span class="t-key">"university"</span>: "BRAC University",</span>
         <span class="t-out">&nbsp;&nbsp;<span class="t-key">"focus"</span>: "Offensive Security",</span>
         <span class="t-out">&nbsp;&nbsp;<span class="t-key">"status"</span>: "Actively hacking"</span>
@@ -600,29 +202,107 @@
   </div>
 </section>
 
-<!-- KDRAMA -->
-<section id="kdrama">
-  <div class="section-label">02 — off-duty</div>
-  <h2 class="section-title">Top K-Dramas</h2>
-  <div class="kdrama-grid reveal">
-    <div class="kdrama-card">
-      <div class="kdrama-rank">01</div>
-      <h3>Descendants of the Sun</h3>
-      <p>An epic romance between a soldier and a doctor who face love and duty amid life-threatening missions and humanitarian work.</p>
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label">02 — projects</div>
+  <h2 class="section-title">Featured Projects</h2>
+  <div class="projects-grid reveal">
+
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-icon">⬡</div>
+        <div class="project-links">
+          <a href="https://github.com/Kyoru007/Aronnyok-Management-System" target="_blank" class="project-link">GitHub ↗</a>
+        </div>
+      </div>
+      <h3 class="project-name">Aronnyok Management System</h3>
+      <p class="project-desc">A full-stack web-based Employee Management System. Supports complete CRUD operations for employees, universities, disciplines, and departments — including file uploads for images and ID cards with Cloudinary integration.</p>
+      <div class="project-tags">
+        <span class="ptag">React</span>
+        <span class="ptag">Node.js</span>
+        <span class="ptag">Express.js</span>
+        <span class="ptag">MySQL</span>
+        <span class="ptag">Cloudinary</span>
+        <span class="ptag">Axios</span>
+      </div>
+      <div class="project-stats">
+        <span class="pstat">★ 8 stars</span>
+        <span class="pstat">⑂ 1 fork</span>
+        <span class="pstat">JS 96.4%</span>
+      </div>
     </div>
-    <div class="kdrama-card">
-      <div class="kdrama-rank">02</div>
-      <h3>Crash Landing on You</h3>
-      <p>A South Korean heiress and a North Korean soldier find love across borders. A mix of romance, action, and heartwarming moments.</p>
+    <div class="project-card">
+    <div class="project-header">
+      <div class="project-icon">⟡</div>
+      <div class="project-links">
+        <a href="https://github.com/Kyoru007/fanalyzer" target="_blank" class="project-link">GitHub ↗</a>
+      </div>
     </div>
-    <div class="kdrama-card">
-      <div class="kdrama-rank">03</div>
-<h3>Extraordinary You</h3>
-<p>A high school girl discovers she's a side character in a comic book and rebels against her scripted fate, blending romance, fantasy, and self-discovery.</p>
-</div>
+
+    <h3 class="project-name">fanalyzer</h3>
+
+    <p class="project-desc">
+      A command-line ELF binary analysis tool for Linux security research and CTFs.
+      It automates static checks such as file info, checksec, symbol extraction,
+      readelf output, dangerous function detection, and ROP gadget discovery.
+    </p>
+
+    <div class="project-tags">
+      <span class="ptag">Python</span>
+      <span class="ptag">ELF</span>
+      <span class="ptag">Linux</span>
+      <span class="ptag">CTF</span>
+      <span class="ptag">Binary Analysis</span>
+      <span class="ptag">CLI</span>
+    </div>
+
+    <div class="project-stats">
+      <span class="pstat">★ Open source</span>
+      <span class="pstat">⑂ GitHub repo</span>
+      <span class="pstat">Security tool</span>
+    </div>
+  </div>
+
+  </div>
+
+    
+</section>
+<section id="ctfteam">
+  <div class="section-label">03 — ctf team</div>
+  <h2 class="section-title">Team History</h2>
+
+  <div class="projects-grid reveal">
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-icon">⚑</div>
+        <div class="project-links">
+          <a href="https://ctftime.org/team/276641/" target="_blank" class="project-link">CTFtime ↗</a>
+        </div>
+      </div>
+
+      <h3 class="project-name">BR4CU BL1ND3R5</h3>
+
+      <p class="project-desc">
+        My CTF team on CTFtime, built around competitive problem solving, writeups, and collaborative learning across web, reversing, crypto, forensics, and pwn.
+      </p>
+
+      <div class="project-tags">
+        <span class="ptag">CTF</span>
+        <span class="ptag">Team</span>
+        <span class="ptag">Web</span>
+        <span class="ptag">Pwn</span>
+        <span class="ptag">Crypto</span>
+        <span class="ptag">Forensics</span>
+      </div>
+
+      <div class="project-stats">
+        <span class="pstat">★ CTFtime profile</span>
+        <span class="pstat">⑂ Team history</span>
+        <span class="pstat">⚑ Competitions</span>
+      </div>
+    </div>
   </div>
 </section>
-
 <div class="section-divider"><hr></div>
 
 <!-- SOCIALS -->
@@ -631,133 +311,229 @@
   <h2 class="section-title">Find Me Online</h2>
   <div class="socials-grid reveal">
     <a class="social-card" href="https://www.linkedin.com/in/muktadirul-alam-sowad-a08446260/" target="_blank">
-      <div class="social-icon" style="background:rgba(0,119,181,0.15); color:#0077b5;">in</div>
+      <div class="social-icon" style="background:rgba(0,119,181,0.15);color:#0077b5;">in</div>
       <div class="social-name">LinkedIn</div>
       <div class="social-handle">muktadirul-alam-sowad</div>
     </a>
-    <a class="social-card" href="https://www.instagram.com/stellarknight009/" target="_blank">
-      <div class="social-icon" style="background:rgba(225,48,108,0.15); color:#e1306c;">ig</div>
-      <div class="social-name">Instagram</div>
-      <div class="social-handle">@stellarknight009</div>
-    </a>
+
     <a class="social-card" href="https://www.facebook.com/yourprofile" target="_blank">
-      <div class="social-icon" style="background:rgba(24,119,242,0.15); color:#1877f2;">fb</div>
+      <div class="social-icon" style="background:rgba(24,119,242,0.15);color:#1877f2;">fb</div>
       <div class="social-name">Facebook</div>
       <div class="social-handle">Muktadirul Alam Sowad</div>
     </a>
     <a class="social-card" href="https://ctftime.org/" target="_blank">
-      <div class="social-icon" style="background:rgba(0,255,136,0.1); color:var(--accent);">⚑</div>
+      <div class="social-icon" style="background:rgba(0,255,136,0.1);color:var(--accent);">⚑</div>
       <div class="social-name">CTFtime</div>
       <div class="social-handle">CTF Rankings</div>
     </a>
   </div>
-
 </section>
 
 <!-- FOOTER -->
 <footer>
   <p>© <span>Muktadirul Alam Sowad</span> — Built with intention, secured by curiosity.</p>
-  <p style="margin-top:0.5rem; font-size:11px;">Dhaka, Bangladesh</p>
+  <p style="margin-top:0.5rem;font-size:11px;">Dhaka, Bangladesh</p>
 </footer>
 
+<!-- TERMINAL EASTER EGG — HTML must come before the script that uses it -->
+<div id="et-wrap">
+  <div id="et-bar">
+    <div class="et-dots">
+      <div class="et-dot" style="background:#ff5f57" onclick="closeTerminal()"></div>
+      <div class="et-dot" style="background:#ffbd2e"></div>
+      <div class="et-dot" style="background:#28c840"></div>
+    </div>
+    <span id="et-title">sowad@kali: ~  [ press ` to close ]</span>
+    <span></span>
+  </div>
+  <div id="et-body"></div>
+  <div id="et-row">
+    <span id="et-ps">sowad@kali:~$</span>
+    <input id="et-in" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="type a command...">
+    <span id="et-cur"></span>
+  </div>
+</div>
+<div id="et-hint">press <kbd>`</kbd> for terminal</div>
+
 <script>
-  // ── Matrix Rain ──
+// ── Matrix Rain ──
+(function(){
   const canvas = document.getElementById('matrix-canvas');
   const ctx = canvas.getContext('2d');
-  const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
+  const chars = 'アイウエオカキクケコサシスセソABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
   let cols, drops;
-
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    cols = Math.floor(canvas.width / 16);
-    drops = Array(cols).fill(1);
-  }
+  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;cols=Math.floor(canvas.width/16);drops=Array(cols).fill(1)}
   resize();
-  window.addEventListener('resize', resize);
-
-  function drawMatrix() {
-    ctx.fillStyle = 'rgba(8,12,16,0.05)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.font = '14px "Share Tech Mono", monospace';
-    for (let i = 0; i < drops.length; i++) {
-      const char = chars[Math.floor(Math.random() * chars.length)];
-      const bright = Math.random() > 0.95;
-      ctx.fillStyle = bright ? '#ffffff' : '#00ff88';
-      ctx.globalAlpha = bright ? 0.9 : (0.3 + Math.random() * 0.5);
-      ctx.fillText(char, i * 16, drops[i] * 16);
-      ctx.globalAlpha = 1;
-      if (drops[i] * 16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
-      drops[i]++;
+  window.addEventListener('resize',resize);
+  setInterval(function(){
+    ctx.fillStyle='rgba(8,12,16,0.05)';ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.font='14px "Share Tech Mono",monospace';
+    for(var i=0;i<drops.length;i++){
+      var c=chars[Math.floor(Math.random()*chars.length)],bright=Math.random()>0.95;
+      ctx.fillStyle=bright?'#ffffff':'#00ff88';ctx.globalAlpha=bright?0.9:(0.3+Math.random()*0.5);
+      ctx.fillText(c,i*16,drops[i]*16);ctx.globalAlpha=1;
+      if(drops[i]*16>canvas.height&&Math.random()>0.975)drops[i]=0;drops[i]++;
     }
+  },50);
+})();
+
+// ── Scroll reveal ──
+var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el)});
+
+// ── Shuffle Name ──
+(function(){
+  var name="Muktadirul\nAlam Sowad",shuffleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  var accentStart=name.indexOf("Sowad"),container=document.getElementById('shuffle-name');
+  var spans=[];
+  for(var i=0;i<name.length;i++){
+    var ch=name[i];
+    if(ch==='\n'){container.appendChild(document.createElement('br'));continue}
+    var span=document.createElement('span');
+    if(ch===' '){span.className='letter is-space';span.textContent='\u00A0';}
+    else{span.className='letter';span.textContent=shuffleChars[Math.floor(Math.random()*shuffleChars.length)];}
+    container.appendChild(span);
+    spans.push({el:span,original:ch,isSpace:ch===' ',isAccent:i>=accentStart});
   }
-  setInterval(drawMatrix, 50);
+  var letterSpans=spans.filter(function(s){return!s.isSpace});
+  var timer=setInterval(function(){letterSpans.forEach(function(s){if(!s.resolved)s.el.textContent=shuffleChars[Math.floor(Math.random()*shuffleChars.length)]})},50);
+  var ri=0;
+  function next(){
+    if(ri>=letterSpans.length){clearInterval(timer);return}
+    var s=letterSpans[ri];s.el.textContent=s.original;s.el.classList.add('resolved');
+    if(s.isAccent)s.el.classList.add('accent-word');s.resolved=true;ri++;
+    setTimeout(next,ri<4?120:ri<9?70:35);
+  }
+  setTimeout(next,400);
+})();
 
-  // ── Reveal on scroll ──
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+// ── Terminal Easter Egg ──
+(function(){
+  var wrap=document.getElementById('et-wrap');
+  var body=document.getElementById('et-body');
+  var input=document.getElementById('et-in');
+  var hint=document.getElementById('et-hint');
+  var isOpen=false,hist=[],hi=-1,welcomed=false;
 
+  var cmds={
+    help:function(){return[
+      '<span style="color:#00ff88">available commands:</span>',
+      '  whoami   — identity file',
+      '  skills   — capability scan',
+      '  ctf      — competition records',
+      '  contact  — communication channels',
+      '  socials  — social handles',
+      '  quote    — random hacker quote',
+      '  matrix   — toggle matrix intensity',
+      '  clear    — clear terminal',
+      '  exit     — close terminal',
+    ]},
+    whoami:function(){return[
+      '<span style="color:#00ff88">[ identity ]</span>',
+      '  name   : Muktadirul Alam Sowad',
+      '  alias  : Kyoru / Ryoki',
+      '  role   : CTF Player · Red Teamer · Web Dev',
+      '  base   : Dhaka, Bangladesh',
+      '  uni    : BRAC University — B.Sc. CSE',
+      '  status : <span style="color:#00ff88">actively hacking</span>',
+    ]},
+    skills:function(){return[
+      '<span style="color:#00ff88">[ capability scan ]</span>',
+      '  [██████████] web exploitation',
+      '  [█████████░] cryptography',
+      '  [████████░░] forensics',
+      '  [███████░░░] OSINT',
+      '  [██████░░░░] reverse engineering',
+      '  [█████████░] web development',
+    ]},
+    ctf:function(){return[
+      '<span style="color:#00ff88">[ competition records ]</span>',
+      '  NahamCon 2025      — 180th / 2956 teams',
+      '  PatriotCTF 2024    — 275th / 1361 teams',
+      '  BUET CSE Fest 2024 — 11th place (final)',
+      '  DawgCTF 2025       — participant',
+      '  ImaginaryCTF 2025  — participant',
+      '  n00bzCTF 2024      — 593rd / 1237',
+      '  team: <span style="color:#00c8ff">BR4CU BL1ND3R5</span>',
+    ]},
+    contact:function(){return[
+      '<span style="color:#00ff88">[ channels ]</span>',
+      '  linkedin : muktadirul-alam-sowad',
+      '  facebook : Muktadirul Alam Sowad',
+      
+    ]},
+    socials:function(){return[
+      '<span style="color:#00ff88">[ handles ]</span>',
+      
+      '  in → <span style="color:#0077b5">muktadirul-alam-sowad</span>',
+      '  dc → <span style="color:#7289da">discord.gg/3pBTRHnE</span>',
+    ]},
+    quote:function(){
+      var q=['\"The quieter you become, the more you are able to hear.\" — Kali Linux','\"Hack the planet.\" — Hackers (1995)','\"Those crazy enough to think they can change the world are the ones who do.\" — Snowden','\"Security is not a product, but a process.\" — Bruce Schneier','\"The best defense is a good offense.\" — Red Team motto'];
+      return['<span style="color:#00ff88">[ quote ]</span>','  '+q[Math.floor(Math.random()*q.length)]];
+    },
+    matrix:function(){
+      var c=document.getElementById('matrix-canvas');
+      var cur=parseFloat(c.style.opacity||'0.18');
+      c.style.opacity=cur>0.3?'0.18':'0.5';
+      return['<span style="color:#00ff88">[ matrix ]</span>','  intensity → '+c.style.opacity];
+    },
+    clear:function(){body.innerHTML='';return[]},
+    exit:function(){closeTerminal();return[]},
+  };
 
-  // ── Shuffle Name ──
-  (function() {
-    const name = "Muktadirul\nAlam Sowad";
-    // Only uppercase letters — uniform width in monospace, no shaking
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    const accentStart = name.indexOf("Sowad");
-    const container = document.getElementById('shuffle-name');
+  function print(lines){
+    lines.forEach(function(l){
+      var d=document.createElement('div');d.className='el';d.innerHTML=l;body.appendChild(d);
+    });
+    body.scrollTop=body.scrollHeight;
+  }
 
-    const spans = [];
-    for (let i = 0; i < name.length; i++) {
-      const ch = name[i];
-      if (ch === '\n') {
-        container.appendChild(document.createElement('br'));
-        continue;
-      }
-      const span = document.createElement('span');
-      if (ch === ' ') {
-        span.className = 'letter is-space';
-        span.textContent = '\u00A0';
-      } else {
-        span.className = 'letter';
-        span.textContent = chars[Math.floor(Math.random() * chars.length)];
-      }
-      container.appendChild(span);
-      spans.push({ el: span, original: ch, index: i, isSpace: ch === ' ', isAccent: i >= accentStart });
-    }
+  function welcome(){
+    if(welcomed)return;welcomed=true;
+    print([
+      '<span style="color:#00ff88">╔══════════════════════════════════════════╗</span>',
+      '<span style="color:#00ff88">║</span>   sowad terminal v1.0                                                    <span style="color:#00ff88">║</span>',
+      '<span style="color:#00ff88">║</span>   press <span style="color:#fff">`</span> or ESC to close                <span style="color:#00ff88">║</span>',
+      '<span style="color:#00ff88">╚══════════════════════════════════════════╝</span>',
+      'type <span style="color:#00ff88">help</span> to see available commands.',
+      '',
+    ]);
+  }
 
-    const letterSpans = spans.filter(s => !s.isSpace);
+  function openTerminal(){isOpen=true;wrap.classList.add('open');welcome();setTimeout(function(){input.focus()},400)}
+  function closeTerminal(){isOpen=false;wrap.classList.remove('open')}
+  window.closeTerminal=closeTerminal;
 
-    // Shuffle all unresolved letters
-    const shuffleTimer = setInterval(() => {
-      letterSpans.forEach(s => {
-        if (!s.resolved) {
-          s.el.textContent = chars[Math.floor(Math.random() * chars.length)];
-        }
-      });
-    }, 50);
+  function run(raw){
+    var cmd=raw.trim().toLowerCase();
+    if(!cmd)return;
+    hist.unshift(cmd);hi=-1;
+    var echo=document.createElement('div');echo.className='el';
+    echo.innerHTML='<span style="color:#00ff88">sowad@kali:~$</span> '+raw;
+    body.appendChild(echo);
+    var fn=cmds[cmd];
+    if(fn){var r=fn();if(r&&r.length)print(r);}
+    else{print(['<span style="color:#ff5555">bash: '+cmd+': command not found</span>','  try &quot;help&quot;']);}
+    body.scrollTop=body.scrollHeight;
+  }
 
-    // Resolve left to right
-    let resolveIdx = 0;
-    function resolveNext() {
-      if (resolveIdx >= letterSpans.length) {
-        clearInterval(shuffleTimer);
-        return;
-      }
-      const s = letterSpans[resolveIdx];
-      s.el.textContent = s.original;
-      s.el.classList.add('resolved');
-      if (s.isAccent) s.el.classList.add('accent-word');
-      s.resolved = true;
-      resolveIdx++;
-      const delay = resolveIdx < 4 ? 120 : resolveIdx < 9 ? 70 : 35;
-      setTimeout(resolveNext, delay);
-    }
+  document.addEventListener('keydown',function(e){
+    if(e.key==='`'){e.preventDefault();isOpen?closeTerminal():openTerminal();return}
+    if(e.key==='Escape'&&isOpen){closeTerminal()}
+  });
 
-    setTimeout(resolveNext, 400);
-  })();
+  input.addEventListener('keydown',function(e){
+    if(e.key==='Enter'){run(input.value);input.value='';}
+    else if(e.key==='ArrowUp'){e.preventDefault();if(hi<hist.length-1){hi++;input.value=hist[hi];}}
+    else if(e.key==='ArrowDown'){e.preventDefault();if(hi>0){hi--;input.value=hist[hi];}else{hi=-1;input.value='';}}
+    else if(e.key==='Tab'){e.preventDefault();var p=input.value.trim().toLowerCase(),m=Object.keys(cmds).find(function(k){return k.startsWith(p)});if(m)input.value=m;}
+  });
 
+  // Hint tooltip — fades in after 4s, fades out after 8s
+  setTimeout(function(){hint.style.opacity='1'},4000);
+  setTimeout(function(){hint.style.opacity='0'},8000);
+})();
 </script>
 </body>
 </html>
